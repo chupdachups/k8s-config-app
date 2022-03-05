@@ -1,0 +1,20 @@
+FROM maven:3.8.4-openjdk-8-slim
+
+RUN apt-get update
+RUN apt-get install -y git
+
+WORKDIR ~
+
+RUN git clone https://github.com/chupdachups/k8s-config-app.git
+
+RUN mvn -f k8s-config-app/pom.xml package -DskipTests
+
+RUN cp k8s-config-app/target/config-app-0.0.1-SNAPSHOT.jar config-app.jar
+
+RUN rm -rf k8s-config-app
+
+ENTRYPOINT ["java", "-jar"]
+
+CMD ["config-app.jar"]
+
+expose 8080
